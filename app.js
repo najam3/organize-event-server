@@ -271,7 +271,9 @@
             app.get('/users', (req, res) => {
                 prodModel.find({})
                 .then((doc) => {                   
-                   res.send(doc)
+                    res.json({
+                        users:doc
+                    })
                    
                 })
 
