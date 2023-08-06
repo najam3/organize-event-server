@@ -92,7 +92,7 @@
                                         ...user
                                     }
                                     
-                                    const token = jwt.sign(tokenObj,  {expiresIn: '1h'});
+                                    const token = jwt.sign(tokenObj, 'userToken');
                                     console.log(email, password)
                                     res.json({
                                             message:'Logged in Succuessfully',
