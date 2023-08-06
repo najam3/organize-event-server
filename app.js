@@ -1,6 +1,5 @@
                 const express = require('express');
                 const app = express();
-                
                 const bcrypt = require('bcrypt');
                 const cors = require('cors');
                 const mongoose = require('mongoose');
@@ -8,13 +7,24 @@
                 const jwt = require('jsonwebtoken');
                 const allEventsModel = require('./models/allEvents');
                 require('dotenv').config();
-                const port = process.env.PORT || 3000;
+                const PORT = process.env.PORT || 3000;
                 
                 // Connect database
 
-                mongoose.connect(process.env.MONGOOSE_URI)
-                .then(() => console.log('MongoDb Connected'))
-                .catch((err) => console.log('error', err))
+                const connectDB = async () => {
+                    try {
+                      const conn = await mongoose.connect(process.env.MONGOOSE_URI);
+                      console.log(`MongoDB Connected: ${conn.connection.host}`);
+                    } catch (error) {
+                      console.log(error);
+                      process.exit(1);
+                    }
+                  }
+
+
+                // mongoose.connect(process.env.MONGOOSE_URI)
+                // .then(() => console.log('MongoDb Connected'))
+                // .catch((err) => console.log('error', err))
 
                 app.use(cors());
                 app.use(express.json());
@@ -274,38 +284,17 @@
                     res.json({
                         users:doc
                     })
-                   
                 })
 
             })
 
-            // app.post('/deleteattending', async (req, res) => {
-            //     try {
-            //       const data = req.body;
-            //       const { event } = data;
-            //         console.log(event)
-            //       // Update all users in the prodModel to remove the specified event from the attending array
-            //       const result = await prodModel.updateMany(
-            //         { 'attending._id': event._id },
-            //         { $pull: { attending: { _id: event._id } } }
-            //       );
-              
-            //       if (result.nModified === 0) {
-            //         // If no users were updated, the event may not exist in any user's attending arrays
-            //         return res.json({ message: 'Event not found in any user attending lists' });
-            //       }
-              
-            //       res.json({
-            //         message: `Event removed from ${result.nModified} user(s) attending lists`,
-            //       });
-            //     } catch (error) {
-            //       console.error('Error:', error);
-            //       res.status(500).json({ message: 'Internal Server Error' });
-            //     }
-            //   });
-              
+       
 
-        app.listen(port, () => console.log(`Server running at port ${port}`))
+            connectDB().then(() => {
+                app.listen(PORT, () => {
+                    console.log("listening for requests");
+                })
+            })
 
 
 
