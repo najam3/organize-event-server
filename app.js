@@ -91,10 +91,9 @@
                                     const tokenObj = {
                                         ...user
                                     }
-
                                     
-                                    const token = jwt.sign(tokenObj,  process.env.JWT_SECRET, {expiresIn: '1h'});
-                                    
+                                    const token = jwt.sign(tokenObj,  {expiresIn: '1h'});
+                                    console.log(email, password)
                                     res.json({
                                             message:'Logged in Succuessfully',
                                             status: 'Success',
@@ -112,43 +111,22 @@
                         })
                     })
 
-                    const verifyToken = (req, res, next) => {
-                        const token = req.headers.authorization;
-                        if(!token) {
-                            res.status(401).json({message: 'Authorization token is not provided'})
-                        }
-
-                        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-                            if(err) {
-                                return res.status(403).json({ message:'Invalid or expired token' });
-                            }
-                            console.log(req.user);
-                            next();
-                        })
-                    }
-
-                        app.post('/decode', verifyToken, (req, res) => {
-                            const payload = req.user;
-                            res.json({
-                                payload:payload
-                            })
-                        })
 
 
-                // app.post('/decode', async (req, res) => {
-                //         const tokenRecieved = req.body;
-                //         const { token } = tokenRecieved;
-                //         if(token === undefined) return;
+                app.post('/decode', async (req, res) => {
+                        const tokenRecieved = req.body;
+                        const { token } = tokenRecieved;
+                        if(token === undefined) return;
                         
-                //         const decodedToken = jwt.decode(token);
-                //         const payload = decodedToken._doc
-                //         res.json({
-                //             payload:payload,
-                //             status:'Success',
-                //             message:'User verified'
-                //         })
+                        const decodedToken = jwt.decode(token);
+                        const payload = decodedToken._doc
+                        res.json({
+                            payload:payload,
+                            status:'Success',
+                            message:'User verified'
+                        })
                         
-                // })
+                })
 
                 app.post('/create', (req, res) => {
                     const data = req.body;
