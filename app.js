@@ -83,13 +83,18 @@
                                 const passwordMatched = await bcrypt.compare(password, user.password);
                                 console.log('paswordMatched', passwordMatched)
                                 if(!passwordMatched) {
-                                    res.json({message: 'Credentials Error'}) 
+                                    res.status(404).json({message: 'Credentials Error'})
+                                    // res.json({message: 'Credentials Error'}) 
                                     return
-                                } else {
+                                } 
+                                else {
                                     const tokenObj = {
                                         ...user
                                     }
-                                    const token = jwt.sign(tokenObj, "loginToken");
+
+                                    
+                                    const token = jwt.sign(tokenObj,  process.env.JWT_SECRET, {expiresIn: '1h'});
+                                    
                                     res.json({
                                             message:'Logged in Succuessfully',
                                             status: 'Success',
@@ -99,9 +104,7 @@
                                         })                
                                 }
                             } else {
-                                res.json({
-                                    message:'User Not found'
-                                });
+                                return res.status(404).json({message: 'User not found'})
                             }
                         })
                         .catch((error) => {
@@ -109,20 +112,43 @@
                         })
                     })
 
-                app.post('/decode', async (req, res) => {
-                        const tokenRecieved = req.body;
-                        const { token } = tokenRecieved;
-                        if(token === undefined) return;
-                        
-                        const decodedToken = jwt.decode(token);
-                        const payload = decodedToken._doc
-                        res.json({
-                            payload:payload,
-                            status:'Success',
-                            message:'User verified'
+                    const verifyToken = (req, res, next) => {
+                        const token = req.headers.authorization;
+                        if(!token) {
+                            res.status(401).json({message: 'Authorization token is not provided'})
+                        }
+
+                        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+                            if(err) {
+                                return res.status(403).json({ message:'Invalid or expired token' });
+                            }
+                            console.log(req.user);
+                            next();
                         })
+                    }
+
+                        app.post('/decode', verifyToken, (req, res) => {
+                            const payload = req.user;
+                            res.json({
+                                payload:payload
+                            })
+                        })
+
+
+                // app.post('/decode', async (req, res) => {
+                //         const tokenRecieved = req.body;
+                //         const { token } = tokenRecieved;
+                //         if(token === undefined) return;
                         
-                })
+                //         const decodedToken = jwt.decode(token);
+                //         const payload = decodedToken._doc
+                //         res.json({
+                //             payload:payload,
+                //             status:'Success',
+                //             message:'User verified'
+                //         })
+                        
+                // })
 
                 app.post('/create', (req, res) => {
                     const data = req.body;
@@ -150,6 +176,7 @@
                         const data = req.body;
                         
                         const { email } = data;
+                        
                         if(email) {
                             prodModel.findOne({email})
                             .then((user) => {
@@ -157,8 +184,6 @@
                                     user:user,
                                     message: 'This is the updated user data'
                                 })
-
-
 
                             })
                             .catch((error) => {
