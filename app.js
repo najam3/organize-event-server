@@ -279,11 +279,9 @@
 
 
             app.get('/users', (req, res) => {
-                prodModel.find({})
+                prodModel.find({}).maxTimeMS(5000).exec()
                 .then((doc) => {                   
-                    res.json({
-                        users:doc
-                    })
+                  res.send(doc)
                 })
 
             })
