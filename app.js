@@ -281,15 +281,38 @@
                             })
 
 
-            app.get('/users', (req, res) => {
+                app.get('/users', (req, res) => {
                 prodModel.find({}).maxTimeMS(5000).exec()
                 .then((doc) => {                   
                   res.send(doc)
                 })
 
-            })
+                })
 
-       
+                app.post('/deleteaccount', (req, res) => {
+                    const { email } = req.body;
+                
+                    // Delete user from prodModel
+                    prodModel.deleteOne({ email: email })
+                        .then(() => {
+                            // After user deletion, delete their events
+                            return allEventsModel.deleteMany({ created_by: email });
+                        })
+                        .then(() => {
+                            // After both deletions, send a single success response
+                            res.send({
+                                message: `${email} Your account and posts were successfully deleted.`
+                            });
+                        })
+                        .catch((error) => {
+                            res.status(500).send({
+                                message: `Error: ${error}`
+                            });
+                        });
+                });
+                
+
+
 
             connectDB().then(() => {
                 app.listen(PORT, () => {
