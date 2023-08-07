@@ -290,8 +290,10 @@
                 })
 
                 app.post('/deleteaccount', (req, res) => {
-                    const { email } = req.body;
-                
+                    const data = req.body;
+                    const email = data.user;
+
+
                     // Delete user from prodModel
                     prodModel.deleteOne({ email: email })
                         .then(() => {
