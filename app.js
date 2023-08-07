@@ -21,7 +21,11 @@
                     }
                   }
 
+                  app.use((req, res, next) => {
+                    res.setHeader('Access-Control-Allow-Origin', 'http"//localhost:5173');
 
+                    next();
+                  })
                 // mongoose.connect(process.env.MONGOOSE_URI)
                 // .then(() => console.log('MongoDb Connected'))
                 // .catch((err) => console.log('error', err))
