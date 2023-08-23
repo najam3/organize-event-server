@@ -7,7 +7,7 @@
                 const jwt = require('jsonwebtoken');
                 const allEventsModel = require('./models/allEvents');
                 require('dotenv').config();
-                const PORT =  3000;
+                const PORT =   process.env || 3000;
                 
                 // Connect database
 
