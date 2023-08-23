@@ -7,7 +7,7 @@
                 const jwt = require('jsonwebtoken');
                 const allEventsModel = require('./models/allEvents');
                 require('dotenv').config();
-                const PORT =   process.env || 3000;
+                const PORT =  process.env.PORT || 3000;
                 
                 // Connect database
 
@@ -26,9 +26,9 @@
 
                     next();
                   })
-                // mongoose.connect(process.env.MONGOOSE_URI)
-                // .then(() => console.log('MongoDb Connected'))
-                // .catch((err) => console.log('error', err))
+                mongoose.connect(process.env.MONGOOSE_URI)
+                .then(() => console.log('MongoDb Connected'))
+                .catch((err) => console.log('error', err))
 
                 app.use(cors());
                 app.use(express.json());
