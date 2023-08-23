@@ -22,7 +22,7 @@
                   }
 
                   app.use((req, res, next) => {
-                    res.setHeader('Access-Control-Allow-Origin', 'https://dull-pink-dolphin-gear.cyclic.cloud');
+                    res.setHeader('Access-Control-Allow-Origin', 'https://event-frontend-sigma.vercel.app/');
 
                     next();
                   })
